@@ -47,7 +47,7 @@ def distanceCalc():
     else:
         return False
 
-while True:
+def main():
     # Opens the modifier.txt
     f = open("modifier.txt")
     modx = f.read()
