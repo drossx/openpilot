@@ -9,7 +9,7 @@
 
 // these are set in the Honda safety hooks...this is the wrong place
 const int gas_interceptor_threshold = 328;
-int gas_interceptor_detected = 0;
+static int gas_interceptor_detected;
 int brake_prev = 0;
 int gas_prev = 0;
 int gas_interceptor_prev = 0;

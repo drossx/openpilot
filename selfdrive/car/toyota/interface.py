@@ -25,7 +25,8 @@ class CarInterface(object):
     self.can_invalid_count = 0
     self.cam_can_valid_count = 0
     self.cruise_enabled_prev = False
-
+    self.enabled = False
+	
     # *** init the major players ***
     self.CS = CarState(CP)
 
@@ -89,7 +90,7 @@ class CarInterface(object):
       ret.steerActuatorDelay = 0.25
 
     elif candidate in [CAR.RAV4, CAR.RAV4H]:
-      stop_and_go = True if (candidate in CAR.RAV4H) else False
+      stop_and_go = True
       ret.safetyParam = 73  # see conversion factor for STEER_TORQUE_EPS in dbc file
       ret.wheelbase = 2.65
       ret.steerRatio = 16.30   # 14.5 is spec end-to-end
@@ -159,7 +160,7 @@ class CarInterface(object):
 
     # min speed to enable ACC. if car can do stop and go, then set enabling speed
     # to a negative value, so it won't matter.
-    ret.minEnableSpeed = -1. if (stop_and_go or ret.enableGasInterceptor) else 19. * CV.MPH_TO_MS
+    ret.minEnableSpeed = -1.
 
     centerToRear = ret.wheelbase - ret.centerToFront
     # TODO: get actual value, for now starting with reasonable value for
@@ -183,8 +184,8 @@ class CarInterface(object):
     # steer, gas, brake limitations VS speed
     ret.steerMaxBP = [16. * CV.KPH_TO_MS, 45. * CV.KPH_TO_MS]  # breakpoints at 1 and 40 kph
     ret.steerMaxV = [1., 1.]  # 2/3rd torque allowed above 45 kph
-    ret.brakeMaxBP = [5., 20.]
-    ret.brakeMaxV = [1., 0.8]
+    ret.brakeMaxBP = [5., 20.] #m/s
+    ret.brakeMaxV = [1.2, 0.8] #max brake allowed
 
     ret.enableCamera = not check_ecu_msgs(fingerprint, ECU.CAM)
     ret.enableDsu = not check_ecu_msgs(fingerprint, ECU.DSU)
@@ -202,6 +203,7 @@ class CarInterface(object):
     ret.startAccel = 0.0
 
     if ret.enableGasInterceptor:
+      cloudlog.warn("Gas Interceptor Detected!")
       ret.gasMaxBP = [0., 9., 35]
       ret.gasMaxV = [0.2, 0.5, 0.7]
       ret.longitudinalKpV = [1.2, 0.8, 0.5]
@@ -328,27 +330,30 @@ class CarInterface(object):
       events.append(create_event('reverseGear', [ET.NO_ENTRY, ET.IMMEDIATE_DISABLE]))
     if self.CS.steer_error:
       events.append(create_event('steerTempUnavailable', [ET.NO_ENTRY, ET.WARNING]))
-    if self.CS.low_speed_lockout and self.CP.enableDsu:
-      events.append(create_event('lowSpeedLockout', [ET.NO_ENTRY, ET.PERMANENT]))
-    if ret.vEgo < self.CP.minEnableSpeed and self.CP.enableDsu:
-      events.append(create_event('speedTooLow', [ET.NO_ENTRY]))
-      if c.actuators.gas > 0.1:
-        # some margin on the actuator to not false trigger cancellation while stopping
-        events.append(create_event('speedTooLow', [ET.IMMEDIATE_DISABLE]))
-      if ret.vEgo < 0.001:
-        # while in standstill, send a user alert
-        events.append(create_event('manualRestart', [ET.WARNING]))
+    #if self.CS.low_speed_lockout and self.CP.enableDsu:
+    #  events.append(create_event('lowSpeedLockout', [ET.NO_ENTRY, ET.PERMANENT]))
+    #if ret.vEgo < self.CP.minEnableSpeed and self.CP.enableDsu:
+    #  events.append(create_event('speedTooLow', [ET.NO_ENTRY]))
+    #  if c.actuators.gas > 0.1:
+    #    # some margin on the actuator to not false trigger cancellation while stopping
+    #    events.append(create_event('speedTooLow', [ET.IMMEDIATE_DISABLE]))
+    #  if ret.vEgo < 0.001:
+    #    # while in standstill, send a user alert
+    #    events.append(create_event('manualRestart', [ET.WARNING]))
 
     # enable request in prius is simple, as we activate when Toyota is active (rising edge)
     if ret.cruiseState.enabled and not self.cruise_enabled_prev:
       events.append(create_event('pcmEnable', [ET.ENABLE]))
-    elif not ret.cruiseState.enabled:
-      events.append(create_event('pcmDisable', [ET.USER_DISABLE]))
+    elif ret.leftBlinker or ret.genericToggle or self.enabled:
+      events.append(create_event('pcmEnable', [ET.ENABLE]))
+      self.enabled = True
+    #elif not ret.cruiseState.enabled:
+    #  events.append(create_event('pcmDisable', [ET.USER_DISABLE]))
 
-    # disable on pedals rising edge or when brake is pressed and speed isn't zero
-    if (ret.gasPressed and not self.gas_pressed_prev) or \
-       (ret.brakePressed and (not self.brake_pressed_prev or ret.vEgo > 0.001)):
+    # disable when brake is pressed and speed isn't zero
+    if ret.brakePressed and (not self.brake_pressed_prev or ret.vEgo > 0.001):
       events.append(create_event('pedalPressed', [ET.NO_ENTRY, ET.USER_DISABLE]))
+      self.enabled = False
 
     if ret.gasPressed:
       events.append(create_event('pedalPressed', [ET.PRE_ENABLE]))
