@@ -347,6 +347,10 @@ class CarInterface(object):
     elif ret.leftBlinker or ret.genericToggle or self.enabled:
       events.append(create_event('pcmEnable', [ET.ENABLE]))
       self.enabled = True
+
+    log = open("mainlog.txt", "a")
+    sys.stdout = log
+    print(ret.leftBlinker)
     #elif not ret.cruiseState.enabled:
     #  events.append(create_event('pcmDisable', [ET.USER_DISABLE]))
 
