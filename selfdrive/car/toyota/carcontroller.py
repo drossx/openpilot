@@ -143,7 +143,7 @@ class CarController(object):
 
     apply_accel, self.accel_steady = accel_hysteresis(apply_accel, self.accel_steady, enabled)
 
-    if distanceCalc:
+    if distanceCalc():
         apply_accel = clip(apply_accel * ACCEL_SCALE, ACCEL_MIN, -2.9)
     else:
         apply_accel = clip(apply_accel * ACCEL_SCALE, ACCEL_MIN, ACCEL_MAX)
