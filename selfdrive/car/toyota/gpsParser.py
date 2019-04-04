@@ -23,8 +23,8 @@ def distanceCalc():
     lon1 = radians(abs(gpsLocation.lon))
 
     # Stop sign coordinates go here
-    lat2 = radians(abs(45.382796))
-    lon2 = radians(abs(-75.698951))
+    lat2 = radians(abs(45.37878))
+    lon2 = radians(abs(-75.65460))
 
     # Calculating the difference
     dlon = lon2 - lon1
@@ -58,9 +58,9 @@ while True:
     # Output for debugging
     print("This is my latitude", gpsLocation.lat)
     print("This is my longitude", gpsLocation.lon)
-    
+
     # Calls distance calculation
     distanceCalc()
-    
+
     # Update the time it refreshes (in seconds)
     time.sleep(1)
