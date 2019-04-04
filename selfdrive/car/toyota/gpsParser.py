@@ -7,14 +7,15 @@ from math import sin, cos, sqrt, atan2, radians
 # IP of the OBU
 device = "192.168.3.102"
 
-print('Waiting for a connection')
-
-# Set parameters
-connect(host=device)
-
-print("Parsing GPS information...")
-
 def distanceCalc():
+
+    print('Waiting for a connection')
+
+    # Set parameters
+    connect(host=device)
+
+    print("Parsing GPS information...")
+
     # Approximate radius of Earth in km
     R = 6378.1
 
