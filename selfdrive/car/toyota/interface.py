@@ -7,6 +7,7 @@ from selfdrive.controls.lib.vehicle_model import VehicleModel
 from selfdrive.car.toyota.carstate import CarState, get_can_parser, get_cam_can_parser
 from selfdrive.car.toyota.values import ECU, check_ecu_msgs, CAR
 from selfdrive.swaglog import cloudlog
+import sys
 
 try:
   from selfdrive.car.toyota.carcontroller import CarController
