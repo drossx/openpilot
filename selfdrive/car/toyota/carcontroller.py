@@ -9,7 +9,7 @@ from selfdrive.car.toyota.toyotacan import make_can_msg, create_video_target,\
 from selfdrive.car.toyota.values import ECU, STATIC_MSGS
 from selfdrive.can.packer import CANPacker
 
-from gpsParser import distanceCalc
+from gpsParser import distanceCalc, parserInit
 
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 AudibleAlert = car.CarControl.HUDControl.AudibleAlert
@@ -124,6 +124,8 @@ class CarController(object):
     if enable_apg: self.fake_ecus.add(ECU.APGS)
 
     self.packer = CANPacker(dbc_name)
+
+    parserInit()
 
   def update(self, sendcan, enabled, CS, frame, actuators,
              pcm_cancel_cmd, hud_alert, audible_alert, forwarding_camera, left_line, right_line, lead):

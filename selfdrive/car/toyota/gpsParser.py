@@ -1,32 +1,62 @@
 # Created by Fayez Joseph Chedid
 
 from gpsdpyx import connect, get_current
-import time
+import time, sys
 from math import sin, cos, sqrt, atan2, radians
+import signal
 
 # IP of the OBU
 device = "192.168.3.102"
 
-def distanceCalc():
+def parserInit():
 
-    print('Waiting for a connection')
+    global gpsLocation
+
+    def signal_handler(signum, frame):
+        raise Exception('Timed out')
+
+    signal.signal(signal.SIGALRM, signal_handler)
+    signal.alarm(1) #3 seconds to connect
+
+    #log
+    log = open("initlog.txt", "a")
+    sys.stdout = log
 
     # Set parameters
-    connect(host=device)
+    try:
+        connect(host=device)
+        gpsLocation = get_current()
+        print('Connected')
+    except Exception, msg:
+        print('Timed out')
+    finally:
+        signal.signal(signal.SIGALRM, signal.SIG_IGN)
 
-    print("Parsing GPS information...")
+def distanceCalc():
 
-    # Opens the modifier.txt
-    f = open("modifier.txt")
-    modx = f.read()
-    mod = int(modx)
+    global gpsLocation
+
+    #log
+    log = open("mainlog.txt", "a")
+    sys.stdout = log
 
     # Get the current position
-    gpsLocation = get_current()
+    try:
+        gpsLocation = get_current()
+    except AttributeError:
+        print("No signal found")
+        return False
+
+    print('made it in')
+
+    # Opens the modifier.txt
+    #f = open("modifier.txt")
+    #modx = f.read()
+    #mod = int(modx)
 
     # Output for debugging
-    print("This is my latitude", gpsLocation.lat)
-    print("This is my longitude", gpsLocation.lon)
+    #print("This is my latitude", gpsLocation.lat)
+    #print("This is my longitude", gpsLocation.lon)
 
     # Approximate radius of Earth in km
     R = 6378.1
@@ -51,13 +81,11 @@ def distanceCalc():
     d = (R * c)*1000
     distance = round(d, 4)
 
-    print("Result:", abs(distance*mod), "m")
+    print("Result:", abs(distance), "m")
 
     # If the distance is less than X meters (in this example) then apply the brakes
     if distance <= 5:
         return True
     else:
         return False
-
-    time.sleep(0.2)
 
