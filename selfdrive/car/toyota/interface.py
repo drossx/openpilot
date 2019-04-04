@@ -7,7 +7,6 @@ from selfdrive.controls.lib.vehicle_model import VehicleModel
 from selfdrive.car.toyota.carstate import CarState, get_can_parser, get_cam_can_parser
 from selfdrive.car.toyota.values import ECU, check_ecu_msgs, CAR
 from selfdrive.swaglog import cloudlog
-import sys
 
 try:
   from selfdrive.car.toyota.carcontroller import CarController
@@ -349,9 +348,6 @@ class CarInterface(object):
       events.append(create_event('pcmEnable', [ET.ENABLE]))
       self.enabled = True
 
-    log = open("mainlog.txt", "a")
-    sys.stdout = log
-    print(ret.leftBlinker, file=log)
     #elif not ret.cruiseState.enabled:
     #  events.append(create_event('pcmDisable', [ET.USER_DISABLE]))
 
