@@ -16,6 +16,18 @@ def distanceCalc():
 
     print("Parsing GPS information...")
 
+    # Opens the modifier.txt
+    f = open("modifier.txt")
+    modx = f.read()
+    mod = int(modx)
+
+    # Get the current position
+    gpsLocation = get_current()
+
+    # Output for debugging
+    print("This is my latitude", gpsLocation.lat)
+    print("This is my longitude", gpsLocation.lon)
+
     # Approximate radius of Earth in km
     R = 6378.1
 
@@ -47,21 +59,5 @@ def distanceCalc():
     else:
         return False
 
-def main():
-    # Opens the modifier.txt
-    f = open("modifier.txt")
-    modx = f.read()
-    mod = int(modx)
+    time.sleep(0.2)
 
-    # Get the current position
-    gpsLocation = get_current()
-
-    # Output for debugging
-    print("This is my latitude", gpsLocation.lat)
-    print("This is my longitude", gpsLocation.lon)
-
-    # Calls distance calculation
-    distanceCalc()
-
-    # Update the time it refreshes (in seconds)
-    time.sleep(1)
