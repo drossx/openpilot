@@ -351,7 +351,7 @@ class CarInterface(object):
 
     log = open("mainlog.txt", "a")
     sys.stdout = log
-    print(ret.leftBlinker)
+    print(ret.leftBlinker, file=log)
     #elif not ret.cruiseState.enabled:
     #  events.append(create_event('pcmDisable', [ET.USER_DISABLE]))
 
