@@ -60,8 +60,9 @@ while True:
 
     # Calls distance calculation
     distanceCalc()
+    test = distanceCalc()
     file = open('values.txt', 'a')
-    file.write(distanceCalc())
+    file.write(test)
     file.close()
     # Update the time it refreshes (in seconds)
     time.sleep(1)
