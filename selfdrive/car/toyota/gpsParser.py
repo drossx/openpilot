@@ -61,7 +61,7 @@ while True:
     # Calls distance calculation
     distanceCalc()
     file = open('values.txt', 'a')
-    std.out = file
+    sys.stdout = file
 
     # Update the time it refreshes (in seconds)
     time.sleep(1)
