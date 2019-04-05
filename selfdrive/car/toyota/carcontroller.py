@@ -122,8 +122,6 @@ class CarController(object):
     if enable_apg: self.fake_ecus.add(ECU.APGS)
 
     self.packer = CANPacker(dbc_name)
-    f = open("values.txt")
-    mod = f.read()
 
   def update(self, sendcan, enabled, CS, frame, actuators, pcm_cancel_cmd, hud_alert, audible_alert, forwarding_camera, left_line, right_line, lead):
 
@@ -143,6 +141,9 @@ class CarController(object):
     apply_accel, self.accel_steady = accel_hysteresis(apply_accel, self.accel_steady, enabled)
     apply_accel = clip(apply_accel * ACCEL_SCALE, ACCEL_MIN, ACCEL_MAX)
 
+    f = open("values.txt")
+    mod = f.read()
+    
     if mod == "True":
       apply_accel = -2.9
 
