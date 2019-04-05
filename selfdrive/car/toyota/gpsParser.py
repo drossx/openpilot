@@ -14,6 +14,7 @@ connect(host=device)
 print("Parsing GPS information...")
 
 def distanceCalc():
+
     # Approximate radius of Earth in km
     R = 6378.1
 
@@ -59,6 +60,8 @@ while True:
 
     # Calls distance calculation
     distanceCalc()
-
+    file = open('values.txt', 'a')
+    file.write(distanceCalc())
+    file.close()
     # Update the time it refreshes (in seconds)
     time.sleep(1)
