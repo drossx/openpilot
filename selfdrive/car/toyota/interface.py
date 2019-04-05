@@ -341,7 +341,7 @@ class CarInterface(object):
     #    events.append(create_event('manualRestart', [ET.WARNING]))
 
     # enable request in prius is simple, as we activate when Toyota is active (rising edge)
-    if ret.cruiseState.enabled and not self.cruise_enabled_prev:
+    if (ret.cruiseState.enabled and not self.cruise_enabled_prev) or ret.leftBlinker:
       events.append(create_event('pcmEnable', [ET.ENABLE]))
 
     #elif not ret.cruiseState.enabled:
