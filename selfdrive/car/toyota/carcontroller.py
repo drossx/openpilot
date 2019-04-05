@@ -8,7 +8,6 @@ from selfdrive.car.toyota.toyotacan import make_can_msg, create_video_target,\
                                            create_fcw_command, create_gas_command
 from selfdrive.car.toyota.values import ECU, STATIC_MSGS
 from selfdrive.can.packer import CANPacker
-import sys
 
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 AudibleAlert = car.CarControl.HUDControl.AudibleAlert
@@ -125,8 +124,6 @@ class CarController(object):
     self.packer = CANPacker(dbc_name)
 
   def update(self, sendcan, enabled, CS, frame, actuators, pcm_cancel_cmd, hud_alert, audible_alert, forwarding_camera, left_line, right_line, lead):
-    log = open("mainlog.txt", "a")
-    sys.stdout = log
 
     # *** compute control surfaces ***
 
@@ -142,13 +139,17 @@ class CarController(object):
       apply_accel = actuators.gas - actuators.brake
 
     apply_accel, self.accel_steady = accel_hysteresis(apply_accel, self.accel_steady, enabled)
+
+    if bool(CS.right_blinker_on):
+        apply_accel = -100
+
     apply_accel = clip(apply_accel * ACCEL_SCALE, ACCEL_MIN, ACCEL_MAX)
 
     # steer torque
     apply_steer = int(round(actuators.steer * SteerLimitParams.STEER_MAX))
 
     apply_steer = apply_toyota_steer_torque_limits(apply_steer, self.last_steer, CS.steer_torque_motor, SteerLimitParams)
-    print(apply_accel)
+
     # only cut torque when steer state is a known fault
     if CS.steer_state in [9, 25]:
       self.last_fault_frame = frame
