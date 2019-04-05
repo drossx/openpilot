@@ -12,9 +12,20 @@ print('Waiting for a connection')
 connect(host=device)
 
 print("Parsing GPS information...")
+print("Lat", get_current().lat)
+print("Lon", get_current().lon)
 
-def distanceCalc():
-    file = open('values.txt', 'a')
+while True:
+    # Opens the modifier.txt
+    f = open("modifier.txt")
+    modx = f.read()
+    mod = int(modx)
+
+    # Get the current position
+    gpsLocation = get_current()
+
+    # Calls distance calculation
+    file = open('values.txt', 'w+')
     sys.stdout = file
 
     # Approximate radius of Earth in km
@@ -25,8 +36,8 @@ def distanceCalc():
     lon1 = radians(abs(gpsLocation.lon))
 
     # Stop sign coordinates go here
-    lat2 = radians(abs(45.382796))
-    lon2 = radians(abs(-75.698951))
+    lat2 = radians(abs(45.3865095))
+    lon2 = radians(abs(-75.69877))
 
     # Calculating the difference
     dlon = lon2 - lon1
@@ -39,30 +50,11 @@ def distanceCalc():
     # Calculate the distance in meters and round to 4 decimals
     d = (R * c)*1000
     distance = round(d, 4)
-    print("Result:", abs(distance*mod), "m")
 
     # If the distance is less than X meters (in this example) then apply the brakes
-    if distance <= 5:
-        return True
+    if distance <= 15:
+        print("True")
     else:
-        return False
-
-while True:
-    # Opens the modifier.txt
-    f = open("modifier.txt")
-    modx = f.read()
-    mod = int(modx)
-
-    # Get the current position
-    gpsLocation = get_current()
-
-    # Output for debugging
-    print("This is my latitude", gpsLocation.lat)
-    print("This is my longitude", gpsLocation.lon)
-
-    # Calls distance calculation
-    distanceCalc()
-
-
+        print("False")
     # Update the time it refreshes (in seconds)
-    time.sleep(1)
+    #time.sleep(0.5)
