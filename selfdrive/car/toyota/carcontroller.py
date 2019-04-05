@@ -145,7 +145,7 @@ class CarController(object):
     #f = open("values.txt")
     #mod = f.read()
 
-    if speed():
+    if speed() is True:
       apply_accel = -2.9
 
     # steer torque
