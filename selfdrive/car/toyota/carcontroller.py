@@ -141,7 +141,11 @@ class CarController(object):
     apply_accel, self.accel_steady = accel_hysteresis(apply_accel, self.accel_steady, enabled)
     apply_accel = clip(apply_accel * ACCEL_SCALE, ACCEL_MIN, ACCEL_MAX)
 
-    apply_accel = -2.9
+    f = open("values.txt")
+    mod = f.read()
+
+    if mod == "True":
+      apply_accel = -2.9
 
     # steer torque
     apply_steer = int(round(actuators.steer * SteerLimitParams.STEER_MAX))
