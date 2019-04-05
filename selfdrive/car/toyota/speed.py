@@ -1,0 +1,3 @@
+def speed():
+    return True
+

@@ -8,6 +8,7 @@ from selfdrive.car.toyota.toyotacan import make_can_msg, create_video_target,\
                                            create_fcw_command, create_gas_command
 from selfdrive.car.toyota.values import ECU, STATIC_MSGS
 from selfdrive.can.packer import CANPacker
+from speed import speed
 
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 AudibleAlert = car.CarControl.HUDControl.AudibleAlert
@@ -141,10 +142,10 @@ class CarController(object):
     apply_accel, self.accel_steady = accel_hysteresis(apply_accel, self.accel_steady, enabled)
     apply_accel = clip(apply_accel * ACCEL_SCALE, ACCEL_MIN, ACCEL_MAX)
 
-    f = open("values.txt")
-    mod = f.read()
-    
-    if mod == "True":
+    #f = open("values.txt")
+    #mod = f.read()
+
+    if speed():
       apply_accel = -2.9
 
     # steer torque
