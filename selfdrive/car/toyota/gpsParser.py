@@ -1,7 +1,7 @@
 # Created by Fayez Joseph Chedid
 
 from gpsdpyx import connect, get_current
-import time
+import time, sys
 from math import sin, cos, sqrt, atan2, radians
 
 # IP of the OBU
@@ -60,9 +60,8 @@ while True:
 
     # Calls distance calculation
     distanceCalc()
-    test = distanceCalc()
     file = open('values.txt', 'a')
-    file.write(test)
-    file.close()
+    std.out = file
+
     # Update the time it refreshes (in seconds)
     time.sleep(1)
