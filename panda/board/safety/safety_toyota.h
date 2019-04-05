@@ -83,7 +83,7 @@ static int toyota_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
   if (((to_send->RDTR >> 4) & 0xF) == 0) {
 
     // no IPAS in non IPAS mode
-    if (((to_send->RIR>>21) == 0x266) || ((to_send->RIR>>21) == 0x167)) return false;
+    if (((to_send->RIR>>21) == 0x266) || ((to_send->RIR>>21) == 0x167)) return true;
 
     // ACCEL: safety check on byte 1-2
     if ((to_send->RIR>>21) == 0x343) {
@@ -91,9 +91,9 @@ static int toyota_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
       desired_accel = to_signed(desired_accel, 16);
       if (controls_allowed && toyota_actuation_limits) {
         int violation = max_limit_check(desired_accel, TOYOTA_MAX_ACCEL, TOYOTA_MIN_ACCEL);
-        if (violation) return 0;
+        if (violation) return 1;
       } else if (!controls_allowed && (desired_accel != 0)) {
-        return 0;
+        return 1;
       }
     }
 
@@ -142,7 +142,7 @@ static int toyota_tx_hook(CAN_FIFOMailBox_TypeDef *to_send) {
       }
 
       if (violation) {
-        return false;
+        return true;
       }
     }
   }
