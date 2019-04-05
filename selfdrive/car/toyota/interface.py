@@ -26,7 +26,7 @@ class CarInterface(object):
     self.cam_can_valid_count = 0
     self.cruise_enabled_prev = False
     self.enabled = False
-	
+
     # *** init the major players ***
     self.CS = CarState(CP)
 
@@ -324,8 +324,8 @@ class CarInterface(object):
       events.append(create_event('seatbeltNotLatched', [ET.NO_ENTRY, ET.SOFT_DISABLE]))
     if self.CS.esp_disabled and self.CP.enableDsu:
       events.append(create_event('espDisabled', [ET.NO_ENTRY, ET.SOFT_DISABLE]))
-    if not self.CS.main_on and self.CP.enableDsu:
-      events.append(create_event('wrongCarMode', [ET.NO_ENTRY, ET.USER_DISABLE]))
+    #if not self.CS.main_on and self.CP.enableDsu:
+    #  events.append(create_event('wrongCarMode', [ET.NO_ENTRY, ET.USER_DISABLE]))
     if ret.gearShifter == 'reverse' and self.CP.enableDsu:
       events.append(create_event('reverseGear', [ET.NO_ENTRY, ET.IMMEDIATE_DISABLE]))
     if self.CS.steer_error:
