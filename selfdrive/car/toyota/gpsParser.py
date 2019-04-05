@@ -4,57 +4,58 @@ from gpsdpyx import connect, get_current
 import time, sys
 from math import sin, cos, sqrt, atan2, radians
 
-# IP of the OBU
-device = "192.168.3.102"
+def gps():
+    while True:
+        # Opens the modifier.txt
+        f = open("modifier.txt")
+        modx = f.read()
+        mod = int(modx)
 
-print('Waiting for a connection')
-# Set parameters
-connect(host=device)
+        # Get the current position
+        gpsLocation = get_current()
 
-print("Parsing GPS information...")
-print("Lat", get_current().lat)
-print("Lon", get_current().lon)
+        # Calls distance calculation
+        file = open('values.txt', 'w+')
+        sys.stdout = file
 
-while True:
-    # Opens the modifier.txt
-    f = open("modifier.txt")
-    modx = f.read()
-    mod = int(modx)
+        # Approximate radius of Earth in km
+        R = 6378.1
 
-    # Get the current position
-    gpsLocation = get_current()
+        # Setting the two latitudes and longitudes
+        lat1 = radians(abs(gpsLocation.lat))
+        lon1 = radians(abs(gpsLocation.lon))
 
-    # Calls distance calculation
-    file = open('values.txt', 'w+')
-    sys.stdout = file
+        # Stop sign coordinates go here
+        lat2 = radians(abs(45.3865095))
+        lon2 = radians(abs(-75.69877))
 
-    # Approximate radius of Earth in km
-    R = 6378.1
+        # Calculating the difference
+        dlon = lon2 - lon1
+        dlat = lat2 - lat1
 
-    # Setting the two latitudes and longitudes
-    lat1 = radians(abs(gpsLocation.lat))
-    lon1 = radians(abs(gpsLocation.lon))
+        # Using Haversine formula to calculates the distance between the two points and prints in km
+        a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
+        c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
-    # Stop sign coordinates go here
-    lat2 = radians(abs(45.3865095))
-    lon2 = radians(abs(-75.69877))
+        # Calculate the distance in meters and round to 4 decimals
+        d = (R * c)*1000
+        distance = round(d, 4)
 
-    # Calculating the difference
-    dlon = lon2 - lon1
-    dlat = lat2 - lat1
+        # If the distance is less than X meters (in this example) then apply the brakes
 
-    # Using Haversine formula to calculates the distance between the two points and prints in km
-    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
-    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+        # Update the time it refreshes (in seconds)
+        #time.sleep(0.5)
+        return distance
 
-    # Calculate the distance in meters and round to 4 decimals
-    d = (R * c)*1000
-    distance = round(d, 4)
+if __name__ == "__main__":
+    # IP of the OBU
+    device = "192.168.3.102"
 
-    # If the distance is less than X meters (in this example) then apply the brakes
-    if distance <= 15:
-        print("True")
-    else:
-        print("False")
-    # Update the time it refreshes (in seconds)
-    #time.sleep(0.5)
+    print('Waiting for a connection')
+    # Set parameters
+    connect(host=device)
+
+    print("Parsing GPS information...")
+    print("Lat", get_current().lat)
+    print("Lon", get_current().lon)
+    gps()

@@ -1,2 +1,6 @@
+from gpsParser import gps
 def speed():
-    return False
+    if distance <= 15:
+        return True
+    else:
+        return False
