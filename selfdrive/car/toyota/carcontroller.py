@@ -8,7 +8,9 @@ from selfdrive.car.toyota.toyotacan import make_can_msg, create_video_target,\
                                            create_fcw_command, create_gas_command
 from selfdrive.car.toyota.values import ECU, STATIC_MSGS
 from selfdrive.can.packer import CANPacker
+import settings
 import gpsParser
+from subprocess import call
 
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 AudibleAlert = car.CarControl.HUDControl.AudibleAlert
@@ -123,8 +125,8 @@ class CarController(object):
     if enable_apg: self.fake_ecus.add(ECU.APGS)
 
     self.packer = CANPacker(dbc_name)
-
-    gpsParser() #Start script running
+    settings.init()
+    call(["python", "gpsParser.py"])
 
   def update(self, sendcan, enabled, CS, frame, actuators, pcm_cancel_cmd, hud_alert, audible_alert, forwarding_camera, left_line, right_line, lead):
 
@@ -144,7 +146,7 @@ class CarController(object):
     apply_accel, self.accel_steady = accel_hysteresis(apply_accel, self.accel_steady, enabled)
     apply_accel = clip(apply_accel * ACCEL_SCALE, ACCEL_MIN, ACCEL_MAX)
 
-    if gpsParser.stoppingTime is True:
+    if settings.stoppingTime is True:
       apply_accel = -2.9
 
     # steer torque

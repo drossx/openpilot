@@ -3,11 +3,9 @@
 from gpsdpyx import connect, get_current
 import time, sys
 from math import sin, cos, sqrt, atan2, radians
+import settings
 
 def gps():
-
-    global stoppingTime
-    stoppingTime = False
 
     # Opens the modifier.txt
     f = open("modifier.txt")
@@ -17,10 +15,6 @@ def gps():
     # Get the current position
     gpsLocation = get_current()
 
-    # Calls distance calculation
-    file = open('values.txt', 'a')
-    sys.stdout = file
-
     # Approximate radius of Earth in km
     R = 6378.1
 
@@ -29,8 +23,8 @@ def gps():
     lon1 = radians(abs(gpsLocation.lon))
 
     # Stop sign coordinates go here
-    lat2 = radians(abs(45.3865095))
-    lon2 = radians(abs(-75.69877))
+    lat2 = radians(abs(45.37878))
+    lon2 = radians(abs(-75.6546))
 
     # Calculating the difference
     dlon = lon2 - lon1
@@ -45,19 +39,19 @@ def gps():
     distance = round(d, 4)
 
     if distance <= 15:
-        stoppingTime = True
+        settings.stoppingTime = True
     else:
-        stoppingTime = False
+        settings.stoppingTime = False
 
     # If the distance is less than X meters (in this example) then apply the brakes
 
     # Update the time it refreshes (in seconds)
     #time.sleep(0.5)
-    #return distance
 
 if __name__ == "__main__":
+
     # IP of the OBU
-    device = "192.168.3.112"
+    device = "192.168.3.102"
 
     print('Waiting for a connection')
     # Set parameters
@@ -66,6 +60,7 @@ if __name__ == "__main__":
     print("Parsing GPS information...")
     print("Lat", get_current().lat)
     print("Lon", get_current().lon)
-    while True:
+    while 5>3:
         gps()
+        print(settings.stoppingTime)
         time.sleep(0.2)
