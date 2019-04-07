@@ -5,6 +5,10 @@ import time, sys
 from math import sin, cos, sqrt, atan2, radians
 
 def gps():
+
+    global stoppingTime
+    stoppingTime = False
+
     # Opens the modifier.txt
     f = open("modifier.txt")
     modx = f.read()
@@ -14,7 +18,7 @@ def gps():
     gpsLocation = get_current()
 
     # Calls distance calculation
-    file = open('values.txt', 'w+')
+    file = open('values.txt', 'a')
     sys.stdout = file
 
     # Approximate radius of Earth in km
@@ -40,15 +44,20 @@ def gps():
     d = (R * c)*1000
     distance = round(d, 4)
 
+    if distance <= 15:
+        stoppingTime = True
+    else:
+        stoppingTime = False
+
     # If the distance is less than X meters (in this example) then apply the brakes
 
     # Update the time it refreshes (in seconds)
     #time.sleep(0.5)
-    return distance
+    #return distance
 
 if __name__ == "__main__":
     # IP of the OBU
-    device = "192.168.3.102"
+    device = "192.168.3.112"
 
     print('Waiting for a connection')
     # Set parameters
@@ -59,3 +68,4 @@ if __name__ == "__main__":
     print("Lon", get_current().lon)
     while True:
         gps()
+        time.sleep(0.2)
