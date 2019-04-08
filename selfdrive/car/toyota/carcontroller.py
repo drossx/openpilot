@@ -232,7 +232,8 @@ class CarController(object):
     if CS.CP.enableGasInterceptor:
         # send exactly zero if apply_gas is zero. Interceptor will send the max between read value and apply_gas.
         # This prevents unexpected pedal range rescaling
-        can_sends.append(create_gas_command(self.packer, apply_gas))
+        if settings.stoppingTime is False:
+          can_sends.append(create_gas_command(self.packer, apply_gas))
 
     if frame % 10 == 0 and ECU.CAM in self.fake_ecus and not forwarding_camera:
       for addr in TARGET_IDS:

@@ -23,8 +23,11 @@ def gps():
     lon1 = radians(abs(gpsLocation.lon))
 
     # Stop sign coordinates go here
-    lat2 = radians(abs(45.37878))
-    lon2 = radians(abs(-75.6546))
+    #lat2 = radians(abs(45.37878))
+    #lon2 = radians(abs(-75.6546))
+    #NRC Position
+    lat2 = radians(abs(45.4451366))
+    lon2 = radians(abs(-75.6222004))
 
     # Calculating the difference
     dlon = lon2 - lon1
@@ -37,7 +40,7 @@ def gps():
     # Calculate the distance in meters and round to 4 decimals
     d = (R * c)*1000
     distance = round(d, 4)
-
+    print (distance)
     if distance <= 15:
         settings.stoppingTime = True
     else:
@@ -51,11 +54,16 @@ def gps():
 if __name__ == "__main__":
 
     # IP of the OBU
-    device = "192.168.3.102"
-
+    #device = "192.168.3.102"
+    if sys.argv[1] == "fake":
+      device = "10.12.34.20"
+      thePort = 31337
+    else:
+      device = "10.69.0.30"
+      thePort = 2947
     print('Waiting for a connection')
     # Set parameters
-    connect(host=device)
+    connect(host=device,port=thePort)
 
     print("Parsing GPS information...")
     print("Lat", get_current().lat)
