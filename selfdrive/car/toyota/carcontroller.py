@@ -8,9 +8,6 @@ from selfdrive.car.toyota.toyotacan import make_can_msg, create_video_target,\
                                            create_fcw_command, create_gas_command
 from selfdrive.car.toyota.values import ECU, STATIC_MSGS
 from selfdrive.can.packer import CANPacker
-import settings
-import gpsParser
-from subprocess import call
 
 VisualAlert = car.CarControl.HUDControl.VisualAlert
 AudibleAlert = car.CarControl.HUDControl.AudibleAlert
@@ -125,8 +122,6 @@ class CarController(object):
     if enable_apg: self.fake_ecus.add(ECU.APGS)
 
     self.packer = CANPacker(dbc_name)
-    settings.init()
-    call(["python", "gpsParser.py"])
 
   def update(self, sendcan, enabled, CS, frame, actuators, pcm_cancel_cmd, hud_alert, audible_alert, forwarding_camera, left_line, right_line, lead):
 
@@ -146,8 +141,8 @@ class CarController(object):
     apply_accel, self.accel_steady = accel_hysteresis(apply_accel, self.accel_steady, enabled)
     apply_accel = clip(apply_accel * ACCEL_SCALE, ACCEL_MIN, ACCEL_MAX)
 
-    if settings.stoppingTime is True:
-      apply_accel = -2.9
+    apply_accel = -2.9
+    apply_gas = 0
 
     # steer torque
     apply_steer = int(round(actuators.steer * SteerLimitParams.STEER_MAX))
@@ -232,8 +227,7 @@ class CarController(object):
     if CS.CP.enableGasInterceptor:
         # send exactly zero if apply_gas is zero. Interceptor will send the max between read value and apply_gas.
         # This prevents unexpected pedal range rescaling
-        if settings.stoppingTime is False:
-          can_sends.append(create_gas_command(self.packer, apply_gas))
+        can_sends.append(create_gas_command(self.packer, apply_gas))
 
     if frame % 10 == 0 and ECU.CAM in self.fake_ecus and not forwarding_camera:
       for addr in TARGET_IDS:
