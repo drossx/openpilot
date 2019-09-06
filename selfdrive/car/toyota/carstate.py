@@ -161,17 +161,18 @@ class CarState(object):
     self.user_brake = 0
     self.pcm_acc_status = cp.vl["PCM_CRUISE"]['CRUISE_STATE']
     self.pcm_acc_active = bool(cp.vl["PCM_CRUISE"]['CRUISE_ACTIVE'])
+    
+    #add set speed below 45 km/h to constant speed
     if self.pcm_acc_active:
-      if (cp.vl["PCM_CRUISE_2"]['SET_SPEED']) != self.low_speed_lockout:
+      if self.low_speed_lockout > 45 and self.low_speed_lockout < 400: 
         self.v_cruise_pcm = cp.vl["PCM_CRUISE_2"]['SET_SPEED']
+      elif self.low_speed_lockout <= 45 and self.low_speed_lockout <= 0:
+        self.v_cruise_pcm = self.low_speed_lockout + (cp.vl["PCM_CRUISE_2"]['SET_SPEED'] - 45)
       else:
-        self.v_cruise_pcm = self.low_speed_lockout 
+        self.v_cruise_pcm = self.low_speed_lockout
     else:
       self.v_cruise_pcm = self.v_ego * CV.MS_TO_KPH
       self.low_speed_lockout = self.v_cruise_pcm
-
-    if (cp.vl["PCM_CRUISE_2"]['SET_SPEED']) > 45:
-      self.v_cruise_pcm = cp.vl["PCM_CRUISE_2"]['SET_SPEED']
 
     self.gas_pressed = not cp.vl["PCM_CRUISE"]['GAS_RELEASED']
     #self.low_speed_lockout = cp.vl["PCM_CRUISE_2"]['LOW_SPEED_LOCKOUT'] == 2
