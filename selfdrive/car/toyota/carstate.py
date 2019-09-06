@@ -166,7 +166,7 @@ class CarState(object):
     if self.pcm_acc_active:
       if self.low_speed_lockout > 45 and self.low_speed_lockout < 400: 
         self.v_cruise_pcm = cp.vl["PCM_CRUISE_2"]['SET_SPEED']
-      elif self.low_speed_lockout <= 45 and self.low_speed_lockout <= 0:
+      elif self.low_speed_lockout <= 45 and self.low_speed_lockout >= 0:
         self.v_cruise_pcm = self.low_speed_lockout + (cp.vl["PCM_CRUISE_2"]['SET_SPEED'] - 45)
       else:
         self.v_cruise_pcm = self.low_speed_lockout
