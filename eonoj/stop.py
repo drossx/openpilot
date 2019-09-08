@@ -28,7 +28,7 @@ while (cap.isOpened()):
     for (x, y, w, h) in stops:
       cv.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 3)
       #os.system("rm /data/openpilot/shared/stop.txt")      #rm=delete
-      with open('/data/openpilot/shared/stop.txt') as file:
+      with open('/data/openpilot/shared/stop.txt', 'w') as file:
         file.write('1')
 cap.release()
 cv.destroyAllWindows()
