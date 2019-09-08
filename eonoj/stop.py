@@ -12,8 +12,8 @@ haar_face_cascade = cv.CascadeClassifier(path1)
 
 #path2 = max(glob.glob(os.path.join("/data/media/0/realdata/", '*/')), key=os.path.getmtime)
 #path2 = '/home/oj/Desktop/eon/stopv1.hevc'
-path2='./stopv1.hevc'
-print(path2)
+#path2='./stopv1.hevc'
+#print(path2)
 
 cap = cv.VideoCapture(path2)
 # frame Display
@@ -26,17 +26,6 @@ while (cap.isOpened()):
     # go over list of stop signs and draw them as rectangles on original colored image
     for (x, y, w, h) in stops:
       cv.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 3)
-      #print("x",x,"w",w,"y",y, "h", h)
-      #print ("h (pixels):", h) #h=w=~135 pixels
-      #print ('Calibration - h [pixels]/12[ft]:',round(h/12.0,2)) #where h pixels at 12ft. 12 ft was known from video "12ft"
-      #print "1/(h/11.0)", 1/(h/11.0) #h/12 gives~11, so divide h/11 but since more pixels means less distance so using 1/(h/11)
-      dis= round(133/(h/11.3),1)  #1/(h/11) gives roughly 0.08 so 12/(1/(h/11)) gives a factor of ~140. Using it for scaling
-      print 'distance(ft):',dis
-
-    #cv.imshow('BW',gray)
-    if cv.waitKey(1) & 0xFF == ord('q'):
-        break
-print("existing")
 cap.release()
 cv.destroyAllWindows()
 
