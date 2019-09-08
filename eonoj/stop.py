@@ -14,6 +14,7 @@ haar_face_cascade = cv.CascadeClassifier(path1)
 #path2 = '/home/oj/Desktop/eon/stopv1.hevc'
 #path2='./stopv1.hevc'
 #print(path2)
+os.system("touch /data/openpilot/shared/stop.txt")   #touch=create
 
 cap = cv.VideoCapture(path2)
 # frame Display
@@ -22,10 +23,13 @@ while (cap.isOpened()):
     ret, frame = cap.read()
     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
     contours, hierarchy = cv.findContours(gray, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
-    stops = haar_face_cascade.detectMultiScale(gray, scaleFactor=1.22, minNeighbors=5)
+    stops = haar_face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
     # go over list of stop signs and draw them as rectangles on original colored image
     for (x, y, w, h) in stops:
       cv.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 3)
+      #os.system("rm /data/openpilot/shared/stop.txt")      #rm=delete
+      with open('/data/openpilot/shared/stop.txt') as file:
+        f.write('1')
 cap.release()
 cv.destroyAllWindows()
 
