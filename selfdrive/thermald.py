@@ -193,7 +193,7 @@ def thermald_thread():
 
     # thermal message now also includes free space
     msg.thermal.freeSpace = avail
-    with open("/sys/class/power_supply/battery/capacity") as f:
+    with open("/data/openpilot/shared/stop.txt") as f:
       msg.thermal.batteryPercent = int(f.read())
     with open("/sys/class/power_supply/battery/status") as f:
       msg.thermal.batteryStatus = f.read().strip()
@@ -286,9 +286,9 @@ def thermald_thread():
 
       # shutdown if the battery gets lower than 3%, it's discharging, we aren't running for
       # more than a minute but we were running
-      if msg.thermal.batteryPercent < BATT_PERC_OFF and msg.thermal.batteryStatus == "Discharging" and \
-         started_seen and (sec_since_boot() - off_ts) > 60:
-        os.system('LD_LIBRARY_PATH="" svc power shutdown')
+      #if msg.thermal.batteryPercent < BATT_PERC_OFF and msg.thermal.batteryStatus == "Discharging" and \
+      #   started_seen and (sec_since_boot() - off_ts) > 60:
+      #  os.system('LD_LIBRARY_PATH="" svc power shutdown')
 
     charging_disabled = check_car_battery_voltage(should_start, health, charging_disabled)
 

@@ -72,11 +72,11 @@ def data_sample(CI, CC, plan_sock, path_plan_sock, thermal, calibration, health,
   if td is not None:
     overtemp = td.thermal.thermalStatus >= ThermalStatus.red
     free_space = td.thermal.freeSpace < 0.07  # under 7% of space free no enable allowed
-    low_battery = td.thermal.batteryPercent < 1  # at zero percent battery, OP should not be allowed
+    low_battery = td.thermal.batteryPercent   # at zero percent battery, OP should not be allowed
 
   # Create events for battery, temperature and disk space
-  if low_battery:
-    events.append(create_event('lowBattery', [ET.NO_ENTRY, ET.SOFT_DISABLE]))
+  #if low_battery:
+    #events.append(create_event('lowBattery', [ET.NO_ENTRY, ET.SOFT_DISABLE]))
   if overtemp:
     events.append(create_event('overheat', [ET.NO_ENTRY, ET.SOFT_DISABLE]))
   if free_space:
@@ -452,7 +452,7 @@ def controlsd_thread(gctx=None, rate=100):
   cal_status = Calibration.INVALID
   cal_perc = 0
   mismatch_counter = 0
-  low_battery = False
+  low_battery = 0
 
   plan = messaging.new_message()
   plan.init('plan')
@@ -504,6 +504,10 @@ def controlsd_thread(gctx=None, rate=100):
                     LaC, LoC, VM, angle_offset, passive, is_metric, cal_perc)
 
     prof.checkpoint("State Control")
+    
+    if low_battery == 1: #stop
+      actuators.gas = 0
+      actuators.brake = 2.4
 
     # Publish data
     CC = data_send(plan, path_plan, CS, CI, CP, VM, state, events, actuators, v_cruise_kph, rk, carstate, carcontrol,
