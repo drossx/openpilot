@@ -343,9 +343,8 @@ class CarInterface(object):
     # enable request in prius is simple, as we activate when Toyota is active (rising edge)
     if (ret.cruiseState.enabled and not self.cruise_enabled_prev):# or ret.leftBlinker:
       events.append(create_event('pcmEnable', [ET.ENABLE]))
-
-    #elif not ret.cruiseState.enabled:
-    #  events.append(create_event('pcmDisable', [ET.USER_DISABLE]))
+    elif not ret.cruiseState.enabled:
+      events.append(create_event('pcmDisable', [ET.USER_DISABLE]))
 
     # disable when brake is pressed and speed isn't zero
     if ret.brakePressed and (not self.brake_pressed_prev or ret.vEgo > 0.001):
